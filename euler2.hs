@@ -1,4 +1,4 @@
-euler2 limit (num1:num2) |(num1>limit) = 0
+euler2 limit (num1:num2:[]) |(num1>limit) = 0
                          |((num2>limit) && ((mod num1 2) == 0)) = num1
                          |(num2>limit) = 0
                          |(((mod num1 2) == 0) && ((mod num2 2) == 0)) = num1+num2+(euler2 limit [num1+num2,num1+num2+num2])
