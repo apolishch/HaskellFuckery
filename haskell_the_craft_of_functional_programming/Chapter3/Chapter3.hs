@@ -1,5 +1,5 @@
 module Chapter3 where
-import Prelude hiding(max, min)
+import Prelude
 import Data.Char
 import Test.QuickCheck
 
@@ -43,19 +43,20 @@ prop_fourDifferent :: Integer -> Integer -> Integer -> Integer -> Bool
 prop_fourDifferent a b c d = fourDifferent a b c d == fourDifferentUsingThree a b c d
 prop_threeDifferent a b c = threeDifferent a b c == (a /= b && a /= c && b /= c)
 
-min :: Int -> Int -> Int
+myMin :: Int -> Int -> Int
 minThree :: Int -> Int -> Int -> Int
-min a b
+myMin a b
     |a <= b = a
     |otherwise = b
 
-minThree a b c = min (min a b) (min a c)
+minThree a b c = myMin (myMin a b) (myMin a c)
 
-prop_min1, prop_min2 :: Int -> Int -> Bool
+prop_min1, prop_min2, prop_min3 :: Int -> Int -> Bool
 prop_minThree1, prop_minThree2 :: Int -> Int -> Int -> Bool
 
-prop_min1 a b = a >= (min a b) || b >= (min a b)
-prop_min2 a b = a == (min a b) || b == (min a b)
+prop_min1 a b = a >= (myMin a b) || b >= (myMin a b)
+prop_min2 a b = a == (myMin a b) || b == (myMin a b)
+prop_min3 a b = min a b == myMin a b
 
 prop_minThree1 a b c = a>= (minThree a b c) || b >= (minThree a b c) || c>= (minThree a b c)
 prop_minThree2 a b c = a == (minThree a b c) || b == (minThree a b c) || c == (minThree a b c)
@@ -86,5 +87,46 @@ romanDigit a
     | (charToNum a > 5) && (charToNum a <= 8) = "V"++(take((charToNum a)-5) (repeat 'I'))
     | (charToNum a == 9) = "IX"
 
+averageThree :: Integer -> Integer -> Integer -> Float
+averageThree a b c = (fromIntegral (a + b + c)) / 3
 
+howManyAboveAverage :: Integer -> Integer -> Integer -> Integer
 
+howManyAboveAverage a b c
+    | (a == b) && (b == c) && (a == c) = 0
+    | (fromIntegral a > (averageThree a b c) && (fromIntegral b > (averageThree a b c) || fromIntegral c > (averageThree a b c))) || (fromIntegral b > (averageThree a b c) && fromIntegral c > (averageThree a b c))  = 2
+    | otherwise = 1
+
+prop_averageThree1, prop_averageThree2, prop_averageThree3, prop_howManyAboveAverage :: Integer -> Integer -> Integer -> Bool
+
+prop_averageThree1 a b c = (((averageThree a b c) * (fromIntegral 3)) == (fromIntegral (a + b + c)))
+prop_averageThree2 a b c = (fromIntegral a >= averageThree a b c) || (fromIntegral b >= averageThree a b c) || (fromIntegral c >= averageThree a b c)
+prop_averageThree3 a b c = (fromIntegral a <= averageThree a b c) || (fromIntegral b <= averageThree a b c) || (fromIntegral c <= averageThree a b c)
+prop_howManyAboveAverage a b c = (0 <= howManyAboveAverage a b c) && (2 >= howManyAboveAverage a b c)
+
+numberNDroots, numberRoots :: Float -> Float -> Float -> Integer
+numberNDroots a b c
+    | ((b*b) > (4.0 * a * c)) = 2
+    | ((b*b) == (4.0 * a * c)) = 1
+    | otherwise =  0
+
+numberRoots a b c
+    | a /= 0.0 = numberNDroots a b c
+    | b /= 0.0 = 1
+    | c /= 0.0 = 0
+    | otherwise = 3
+
+smallerRoot, largerRoot :: Float -> Float -> Float -> Float
+smallerRoot a b c
+    |(numberRoots a b c == 3) || (numberRoots a b c == 0) = 0
+    | numberRoots a b c == 1 = (negate c) / b
+    | otherwise = min (((negate b) + (sqrt ((b*b)-(4.0*a*c))))/(2.0*a)) (((negate b) - (sqrt ((b*b)-(4.0*a*c))))/(2.0*a))
+largerRoot a b c
+    |(numberRoots a b c == 3) || (numberRoots a b c == 0) = 0
+    | numberRoots a b c == 1 = (negate c) / b
+    | otherwise = max (((negate b) + (sqrt ((b*b)-(4.0*a*c))))/(2.0*a)) (((negate b) - (sqrt ((b*b)-(4.0*a*c))))/(2.0*a))
+
+prop_Roots1, prop_Roots2 :: Float -> Float -> Float -> Bool
+prop_Roots1 a b c = smallerRoot a b c <= largerRoot a b c
+prop_Roots2 a b c
+ |(numberRoots a b c /= 3) && (numberRoots a b c /= 0) = (floor (abs ((a * (smallerRoot a b c) * (smallerRoot a b c))+(a * (smallerRoot a b c)) + c)) == floor (abs ((a * (largerRoot a b c) * (largerRoot a b c))+(b * (largerRoot a b c)) + c))) && (floor (abs ((a * (largerRoot a b c) * (largerRoot a b c))+(b * (largerRoot a b c)) + c)) == 0)
