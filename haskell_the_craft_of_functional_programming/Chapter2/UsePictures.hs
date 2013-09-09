@@ -1,4 +1,4 @@
-module Chapter2Exercises where
+module UsePictures where
 import Pictures
 
 rotateHorse, whiteHorse, singleCheckersSquare, checkersBoard :: Picture
