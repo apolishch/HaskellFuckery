@@ -128,5 +128,6 @@ largerRoot a b c
 
 prop_Roots1, prop_Roots2 :: Float -> Float -> Float -> Bool
 prop_Roots1 a b c = smallerRoot a b c <= largerRoot a b c
+--FIXME: Fails for largish negative a
 prop_Roots2 a b c
  |(numberRoots a b c /= 3) && (numberRoots a b c /= 0) = (floor (abs ((a * (smallerRoot a b c) * (smallerRoot a b c))+(a * (smallerRoot a b c)) + c)) == floor (abs ((a * (largerRoot a b c) * (largerRoot a b c))+(b * (largerRoot a b c)) + c))) && (floor (abs ((a * (largerRoot a b c) * (largerRoot a b c))+(b * (largerRoot a b c)) + c)) == 0)
