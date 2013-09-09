@@ -96,7 +96,7 @@ howManyAboveAverage a b c
     | (a == b) && (b == c) && (a == c) = 0
     | (fromIntegral a > (averageThree a b c) && (fromIntegral b > (averageThree a b c) || fromIntegral c > (averageThree a b c))) || (fromIntegral b > (averageThree a b c) && fromIntegral c > (averageThree a b c))  = 2
     | otherwise = 1
-
+--These properties segfault - investigating
 prop_averageThree1, prop_averageThree2, prop_averageThree3, prop_howManyAboveAverage :: Integer -> Integer -> Integer -> Bool
 
 prop_averageThree1 a b c = (((averageThree a b c) * (fromIntegral 3)) == (fromIntegral (a + b + c)))
